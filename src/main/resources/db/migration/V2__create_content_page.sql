@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
 -- Table `guesthousemanagement`.`content_page`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `guesthousemanagement`.`content_page` (
+CREATE TABLE IF NOT EXISTS content_page (
     `id` BINARY(16) NOT NULL,
     `slug` VARCHAR(100) NOT NULL,
     `title` VARCHAR(255) NOT NULL,

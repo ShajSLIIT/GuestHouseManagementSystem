@@ -28,7 +28,7 @@ public class AdminUser {
     @Column(length = 255, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 255, nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Column
