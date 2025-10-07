@@ -1,6 +1,5 @@
 package com.ghm.guesthousemanagementsystem.service.impl;
 
-import com.ghm.guesthousemanagementsystem.dto.PropertyDto;
 import com.ghm.guesthousemanagementsystem.entity.Property;
 import com.ghm.guesthousemanagementsystem.mapper.PropertyMapper;
 import com.ghm.guesthousemanagementsystem.repository.PropertyRepo;

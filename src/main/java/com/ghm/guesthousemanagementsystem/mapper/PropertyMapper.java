@@ -1,13 +1,10 @@
 package com.ghm.guesthousemanagementsystem.mapper;
 
-import com.ghm.guesthousemanagementsystem.dto.PropertyDto;
-import com.ghm.guesthousemanagementsystem.dto.RoomDto;
 import com.ghm.guesthousemanagementsystem.entity.Property;
 import com.ghm.guesthousemanagementsystem.entity.Room;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PropertyMapper {
     public static PropertyDto mapToPropertyDto(Property property) {

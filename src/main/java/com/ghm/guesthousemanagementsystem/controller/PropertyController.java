@@ -1,6 +1,5 @@
 package com.ghm.guesthousemanagementsystem.controller;
 
-import com.ghm.guesthousemanagementsystem.dto.PropertyDto;
 import com.ghm.guesthousemanagementsystem.service.PropertyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

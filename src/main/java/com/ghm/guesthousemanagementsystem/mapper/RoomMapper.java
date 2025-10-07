@@ -1,6 +1,5 @@
 package com.ghm.guesthousemanagementsystem.mapper;
 
-import com.ghm.guesthousemanagementsystem.dto.RoomDto;
 import com.ghm.guesthousemanagementsystem.entity.Property;
 import com.ghm.guesthousemanagementsystem.entity.Room;
 
