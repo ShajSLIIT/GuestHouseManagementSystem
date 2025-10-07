@@ -1,15 +1,21 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
+@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "amenity")
 public class Amenity {
-
     @Id
-    @Column(columnDefinition = "BINARY(16)")
+    @Column(name = "amenity_id", columnDefinition = "BINARY(16)")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(length = 100)

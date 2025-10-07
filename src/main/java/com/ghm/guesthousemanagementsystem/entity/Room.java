@@ -23,7 +23,7 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-//    @Column(name = "property_id", columnDefinition = "BINARY(16)")
+    //    @Column(name = "property_id", columnDefinition = "BINARY(16)")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "property_id",
@@ -54,6 +54,10 @@ public class Room {
     private String imageUrl;
 
     // Relationship to room_amenity
-//    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<RoomAmenity> roomAmenities = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "room",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RoomAmenity> amenities = new ArrayList<>();
 }
