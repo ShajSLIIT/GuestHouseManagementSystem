@@ -8,6 +8,7 @@ import com.ghm.guesthousemanagementsystem.mapper.AdminUserMapper;
 import com.ghm.guesthousemanagementsystem.repository.AdminUserRepository;
 import com.ghm.guesthousemanagementsystem.service.AdminUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +19,15 @@ import java.util.UUID;
 public class AdminUserServiceImpl implements AdminUserService {
 
     private final AdminUserRepository adminRepo;
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     public AdminUserResponseDto createAdminUser(AdminUserReqDto adminReqDto) {
         if (adminRepo.findByEmail(adminReqDto.getEmail()).isPresent()) {
            throw new IllegalArgumentException("Email already in use: " + adminReqDto.getEmail());
         }
         AdminUser adminUser = AdminUserMapper.toEntity(adminReqDto);
+        adminUser.setPasswordHash(passwordEncoder.encode(adminReqDto.getPassword()));
         return AdminUserMapper.toResponseDto(adminRepo.save(adminUser));
     }
 
@@ -52,7 +56,7 @@ public class AdminUserServiceImpl implements AdminUserService {
 
         existingAdminUser.setName(adminUserReqDto.getName());
         existingAdminUser.setEmail(adminUserReqDto.getEmail());
-        existingAdminUser.setPasswordHash(adminUserReqDto.getPassword());
+        existingAdminUser.setPasswordHash(passwordEncoder.encode(adminUserReqDto.getPassword()));
 
         return AdminUserMapper.toResponseDto(adminRepo.save(existingAdminUser));
     }

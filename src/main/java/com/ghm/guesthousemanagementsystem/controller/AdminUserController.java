@@ -2,7 +2,6 @@ package com.ghm.guesthousemanagementsystem.controller;
 
 import com.ghm.guesthousemanagementsystem.dto.AdminUserReqDto;
 import com.ghm.guesthousemanagementsystem.dto.AdminUserResponseDto;
-import com.ghm.guesthousemanagementsystem.entity.AdminUser;
 import com.ghm.guesthousemanagementsystem.service.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
