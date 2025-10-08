@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-
 public interface BookingService {
 
     //Admin
@@ -16,7 +15,7 @@ public interface BookingService {
     BookingAdminResponseDto cancelBookingAsAdmin(UUID bookingId, BookingCancelRequestDto cancelDto);
     BookingAdminResponseDto attachRooms(UUID bookingId, BookingAttachRoomsRequestDto attachRoomsDto);
     BookingAdminResponseDto getBookingById(UUID bookingId);
-    List<BookingSummaryResponseDto> getAllBookingsAsAdmin();
+    List<BookingAdminResponseDto> getAllBookingsAsAdmin();
     List<BookingSummaryResponseDto> getAllBookingSummariesAsAdmin();
 
     //Guest
@@ -26,6 +25,5 @@ public interface BookingService {
     BookingGuestResponseDto cancelBookingAsGuest(UUID bookingId, BookingCancelRequestDto cancelDto);
     BookingGuestResponseDto getBookingByToken(String token);
 
-    //Other methods
-    void validateRoomAvailability(List<UUID> roomIds, LocalDate checkInDate, LocalDate checkOutDate);
+
 }

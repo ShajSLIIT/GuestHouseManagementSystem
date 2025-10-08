@@ -17,9 +17,11 @@ import com.ghm.guesthousemanagementsystem.mapper.BookingMapper;
 import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
 import com.ghm.guesthousemanagementsystem.repository.BookingRoomRepository;
 import com.ghm.guesthousemanagementsystem.repository.BookingStatusHistoryRepository;
+import com.ghm.guesthousemanagementsystem.service.BookingRoomService;
 import com.ghm.guesthousemanagementsystem.service.BookingService;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
@@ -41,18 +44,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRoomRepository bookingRoomRepository;
     private final BookingStatusHistoryRepository bookingStatusHistoryRepository;
 
-    @Autowired
-    public BookingServiceImpl(BookingRepository bookingRepository,
-                              PropertyRepository propertyRepository,
-                              RoomRepository roomRepository,
-                              BookingRoomRepository bookingRoomRepository,
-                              BookingStatusHistoryRepository bookingStatusHistoryRepository) {
-        this.bookingRepository = bookingRepository;
-        this.propertyRepository = propertyRepository;
-        this.roomRepository = roomRepository;
-        this.bookingRoomRepository = bookingRoomRepository;
-        this.bookingStatusHistoryRepository = bookingStatusHistoryRepository;
-    }
+    private final BookingRoomService bookingRoomService;
 
     //Admin
     @Override
@@ -77,7 +69,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Stop user from booking already booked rooms
-        validateRoomAvailability(roomIds, createDto.getCheckInDate(), createDto.getCheckOutDate());
+
+        bookingRoomService.validateRoomAvailability(roomIds, createDto.getCheckInDate(), createDto.getCheckOutDate());
 
         //Validate room counts
         if(rooms.size() != roomIds.size()) {
@@ -142,7 +135,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Stop user from booking already booked rooms
-        validateRoomAvailability(roomIds, updateDto.getCheckInDate(), updateDto.getCheckOutDate());
+        bookingRoomService.validateRoomAvailability(roomIds, updateDto.getCheckInDate(), updateDto.getCheckOutDate());
 
         //Validate room counts
         if(rooms.size() != roomIds.size()) {
@@ -280,7 +273,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Validate room availability
-        validateRoomAvailability(
+        bookingRoomService.validateRoomAvailability(
                 roomsToAttach.stream().map(room -> room.getId()).toList(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate());
@@ -331,17 +324,15 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingSummaryResponseDto> getAllBookingsAsAdmin() {
+    public List<BookingAdminResponseDto> getAllBookingsAsAdmin() {
 
         List<Booking> bookings = bookingRepository.findAll();
 
-        List<BookingRoom> bookingRooms = bookingRoomRepository.findAll();
+        List<UUID> bookingIds = bookings.stream()
+                .map(Booking::getBookingId)
+                .toList();
 
-        Map<UUID, List<Room>> roomsByBookingId = bookingRooms.stream()
-                .collect(Collectors.groupingBy(
-                        br->br.getBooking().getBookingId(),
-                        Collectors.mapping(BookingRoom -> BookingRoom.getRoom(), Collectors.toList())
-                ));
+        Map<UUID, List<Room>> roomsByBookingId = bookingRoomService.mapRoomsByBookingIds(bookingIds);
 
         return bookings.stream()
                 .map(booking->{
@@ -386,7 +377,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Stop user from booking already booked rooms
-        validateRoomAvailability(roomIds, createDto.getCheckInDate(), createDto.getCheckOutDate());
+        bookingRoomService.validateRoomAvailability(roomIds, createDto.getCheckInDate(), createDto.getCheckOutDate());
 
         //Validate Room counts
         if(rooms.size() != roomIds.size()) {
@@ -470,7 +461,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
+    @Transactional      // Need to include room validation
     public BookingGuestResponseDto amendBooking(UUID bookingId, BookingAmendRequestDto amendDto) {
 
         Booking booking = bookingRepository.findById(bookingId)
@@ -570,21 +561,5 @@ public class BookingServiceImpl implements BookingService {
 
         return BookingMapper.mapBookingToGuestResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
-
-
-    //Other methods
-    @Override
-    public void validateRoomAvailability(List<UUID> roomIds, LocalDate checkInDate, LocalDate checkOutDate){
-
-        List<Booking> overlappingBookings = bookingRepository.findOverlappingBookingsForRoomIds(
-                roomIds,
-                List.of(BookingStatus.pending, BookingStatus.confirmed),
-                checkInDate,
-                checkOutDate);  //Should check for validation of days in between check_in & check_out
-
-        if(!overlappingBookings.isEmpty()) {
-            throw new RoomUnavailableException("Some rooms are not available for the selected dates.");
-        }
-
-    }
+    
 }

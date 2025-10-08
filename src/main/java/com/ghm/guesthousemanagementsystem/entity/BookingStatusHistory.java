@@ -1,6 +1,7 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,4 +40,6 @@ public class BookingStatusHistory {
 
     @Column(name="reason")
     private String reason;
+
+
 }
