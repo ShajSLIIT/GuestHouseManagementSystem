@@ -1,6 +1,7 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,16 +22,18 @@ public class TemporaryToken {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @Column(length=50)
+    @Column(length=50, nullable=false)
     private String token;
 
+    @NotNull
     @Column(name = "expires_at")
     private LocalDate expiresAt;
 
+    @NotNull
     @Column(name = "is_active")
     private boolean isActive;
 }

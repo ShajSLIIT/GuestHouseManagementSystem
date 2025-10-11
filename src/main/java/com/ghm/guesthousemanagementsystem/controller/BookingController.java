@@ -62,8 +62,8 @@ public class BookingController {
     }
 
     @GetMapping("/admin")
-    public ResponseEntity<List<BookingSummaryResponseDto>> getAllBookingsAsAdmin(){
-        List<BookingSummaryResponseDto> bookings = bookingService.getAllBookingsAsAdmin();
+    public ResponseEntity<List<BookingAdminResponseDto>> getAllBookingsAsAdmin(){
+        List<BookingAdminResponseDto> bookings = bookingService.getAllBookingsAsAdmin();
         return ResponseEntity.ok(bookings);
     }
 

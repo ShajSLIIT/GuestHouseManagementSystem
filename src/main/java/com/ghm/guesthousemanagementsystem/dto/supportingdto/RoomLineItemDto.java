@@ -15,7 +15,7 @@ import java.util.UUID;
 public class RoomLineItemDto {
 
     private UUID roomId;
-    private int noOfNights;
+    private long noOfNights;
     private BigDecimal pricePerNight;
     private BigDecimal lineTotal;
 }

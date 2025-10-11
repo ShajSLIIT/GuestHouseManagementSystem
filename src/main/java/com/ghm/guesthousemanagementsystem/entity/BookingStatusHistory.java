@@ -3,6 +3,7 @@ package com.ghm.guesthousemanagementsystem.entity;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,15 +32,14 @@ public class BookingStatusHistory {
     @Column(name="from_status", length=50)
     private BookingStatus fromStatus;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name="to_status", length=50)
     private BookingStatus toStatus;
 
-    @Column(name = "changed_at")
+    @Column(name = "changed_at", insertable = false, updatable = false)
     private LocalDateTime changedAt;
 
     @Column(name="reason")
     private String reason;
-
-
 }

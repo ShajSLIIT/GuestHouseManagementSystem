@@ -11,6 +11,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -25,7 +27,7 @@ public class Booking {
     @Column(name="booking_id",columnDefinition="BINARY(16)")
     private UUID bookingId;
 
-    @ManyToOne
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "property_id", updatable = false)
     private Property property;
 
@@ -72,10 +74,10 @@ public class Booking {
     @Column(name="is_paid")
     private boolean isPaid;
 
-    @Column(name="confirmed_at", updatable = false)
+    @Column(name="confirmed_at")
     private LocalDateTime confirmedAt;
 
-    @Column(name="expired_at", updatable = false)
+    @Column(name="expired_at")
     private LocalDateTime expiredAt;
 
     @Column(columnDefinition = "TEXT")
@@ -83,4 +85,13 @@ public class Booking {
 
     @Column(length = 100)
     private String token;
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookingRoom> bookingRooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TemporaryToken> temporaryTokens = new ArrayList<>();
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BookingStatusHistory> statusHistory = new ArrayList<>();
 }

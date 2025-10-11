@@ -17,6 +17,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
 //    Optional<Booking> findByReferenceId(String referenceId);
 
+    Optional<Booking> findByBookingId(UUID bookingId);
+
     Optional<Booking> findByToken(String token);
 
     @Query("""
@@ -34,5 +36,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("checkIn") LocalDate checkInDate,
             @Param("checkOut") LocalDate checkOutDate
     );
+
+
 
 }

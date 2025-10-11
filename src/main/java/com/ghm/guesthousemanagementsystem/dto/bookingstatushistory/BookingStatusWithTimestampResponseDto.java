@@ -2,23 +2,20 @@ package com.ghm.guesthousemanagementsystem.dto.bookingstatushistory;
 
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingStatusHistoryResponseDto {
+public class BookingStatusWithTimestampResponseDto {
 
     private UUID bookingId;
-    private String referenceId;
-    private BookingStatus fromStatus;
-    private BookingStatus toStatus;
+    private String  referenceId;
+    private BookingStatus currentStatus;
     private LocalDateTime changedAt;
-    private String reason;
+
 }

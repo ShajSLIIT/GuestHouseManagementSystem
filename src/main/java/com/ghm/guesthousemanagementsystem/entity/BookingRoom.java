@@ -19,12 +19,14 @@ public class BookingRoom {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "booking_id", updatable = false)
+    @JoinColumn(name = "booking_id", updatable = false, nullable = false)
     private Booking booking;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "room_id", updatable = false)
+    @JoinColumn(name = "room_id", updatable = false, nullable = false)
     private Room room;
 
     @Column(name = "start_date")

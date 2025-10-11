@@ -3,26 +3,23 @@ package com.ghm.guesthousemanagementsystem.service.impl;
 import com.ghm.guesthousemanagementsystem.dto.booking.*;
 import com.ghm.guesthousemanagementsystem.dto.supportingdto.PropertySummaryDto;
 import com.ghm.guesthousemanagementsystem.dto.supportingdto.RoomLineItemDto;
-import com.ghm.guesthousemanagementsystem.entity.Booking;
-import com.ghm.guesthousemanagementsystem.entity.BookingRoom;
-import com.ghm.guesthousemanagementsystem.entity.BookingStatusHistory;
-import com.ghm.guesthousemanagementsystem.entity.Room;
+import com.ghm.guesthousemanagementsystem.entity.*;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import com.ghm.guesthousemanagementsystem.exceptions.ResourceNotFoundException;
-import com.ghm.guesthousemanagementsystem.exceptions.RoomUnavailableException;
 import com.ghm.guesthousemanagementsystem.helper.PricingCalculator;
 import com.ghm.guesthousemanagementsystem.helper.ReferenceGenerator;
 import com.ghm.guesthousemanagementsystem.helper.TokenGenerator;
 import com.ghm.guesthousemanagementsystem.mapper.BookingMapper;
-import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
-import com.ghm.guesthousemanagementsystem.repository.BookingRoomRepository;
-import com.ghm.guesthousemanagementsystem.repository.BookingStatusHistoryRepository;
+import com.ghm.guesthousemanagementsystem.mapper.PropertyMapper;
+import com.ghm.guesthousemanagementsystem.mapper.RoomMapper;
+import com.ghm.guesthousemanagementsystem.repository.*;
 import com.ghm.guesthousemanagementsystem.service.BookingRoomService;
 import com.ghm.guesthousemanagementsystem.service.BookingService;
 
+import com.ghm.guesthousemanagementsystem.service.BookingStatusHistoryService;
+import com.ghm.guesthousemanagementsystem.service.TemporaryTokenService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -30,7 +27,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Map;
 
@@ -42,9 +38,10 @@ public class BookingServiceImpl implements BookingService {
     private final PropertyRepository propertyRepository;
     private final RoomRepository roomRepository;
     private final BookingRoomRepository bookingRoomRepository;
-    private final BookingStatusHistoryRepository bookingStatusHistoryRepository;
 
     private final BookingRoomService bookingRoomService;
+    private final BookingStatusHistoryService bookingStatusHistoryService;
+    private final TemporaryTokenService temporaryTokenService;
 
     //Admin
     @Override
@@ -69,7 +66,6 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Stop user from booking already booked rooms
-
         bookingRoomService.validateRoomAvailability(roomIds, createDto.getCheckInDate(), createDto.getCheckOutDate());
 
         //Validate room counts
@@ -78,7 +74,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Validate total no. of guests fits room
-        int totalCapacity = rooms.stream().mapToInt(room -> room.getMaxOccupancy()).sum();
+        int totalCapacity = rooms.stream().mapToInt(Room::getMaxOccupancy).sum();
 
         if(createDto.getNoOfGuests() > totalCapacity) {
             throw new IllegalArgumentException("Selected no. of rooms cannot accommodate the number of guests");
@@ -105,11 +101,17 @@ public class BookingServiceImpl implements BookingService {
         //Save entity
         bookingRepository.save(booking);
 
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, null, BookingStatus.pending,null);
+
+        //Setting a new token field in TemporaryTokenHistory
+        temporaryTokenService.createTemporaryToken(booking, token, createDto.getCheckOutDate().plusMonths(1));
+
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(property);
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, createDto.getCheckInDate(), createDto.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -143,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Validate total no. of guests fits room
-        int totalCapacity = rooms.stream().mapToInt(room -> room.getMaxOccupancy()).sum();
+        int totalCapacity = rooms.stream().mapToInt(Room::getMaxOccupancy).sum();
 
         if(updateDto.getNoOfGuests() > totalCapacity) {
             throw new IllegalArgumentException("Selected no. of rooms cannot accommodate the number of guests");
@@ -155,12 +157,17 @@ public class BookingServiceImpl implements BookingService {
         //Calculating total price
         BigDecimal totalPrice = PricingCalculator.calculateTotal(rooms, updateDto.getCheckInDate(), updateDto.getCheckOutDate());
 
+        LocalDateTime now = LocalDateTime.now();
+
         //Setting data on entity
-        booking.setUpdatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(now);
         booking.setTotalPrice(totalPrice);
 
         //Save entity
         bookingRepository.save(booking);
+
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, BookingStatus.pending, BookingStatus.pending, "Admin updated booking");
 
         //Updating BookingRoom Table
         bookingRoomRepository.deleteByBooking(booking);     //Future implement: Without deleting all and add again we can only add new rooms
@@ -173,7 +180,7 @@ public class BookingServiceImpl implements BookingService {
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -188,19 +195,24 @@ public class BookingServiceImpl implements BookingService {
         List<BookingRoom> bookingRooms = bookingRoomRepository.findAllByBooking(booking);
 
         List<Room> rooms = bookingRooms.stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
+
+        LocalDateTime now = LocalDateTime.now();
 
         booking.setStatus(BookingStatus.confirmed);
         booking.setPaid(true);
 
         bookingRepository.save(booking);
 
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, BookingStatus.pending, BookingStatus.confirmed, null);
+
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -218,28 +230,24 @@ public class BookingServiceImpl implements BookingService {
 
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId)
                 .stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
-        //Setting a new status field in BookingStatusHistory
-        BookingStatusHistory statusHistory = new BookingStatusHistory();
-        statusHistory.setBooking(booking);
-        statusHistory.setFromStatus(booking.getStatus());
-        statusHistory.setToStatus(BookingStatus.cancelled);
-        statusHistory.setChangedAt(LocalDateTime.now());
-        statusHistory.setReason(cancelDto.getReason());
-
-        bookingStatusHistoryRepository.save(statusHistory);
+        LocalDateTime now = LocalDateTime.now();
 
         booking.setStatus(BookingStatus.cancelled);
-        booking.setUpdatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(now);
+
         bookingRepository.save(booking);
+
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, BookingStatus.pending, BookingStatus.cancelled,cancelDto.getReason());
 
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking,  propertySummaryDto, roomLineItemDtos);
     }
@@ -254,7 +262,7 @@ public class BookingServiceImpl implements BookingService {
         //List already booked rooms
         List<Room> currentRooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId)
                 .stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
         //List all new rooms to attach
@@ -274,7 +282,7 @@ public class BookingServiceImpl implements BookingService {
 
         //Validate room availability
         bookingRoomService.validateRoomAvailability(
-                roomsToAttach.stream().map(room -> room.getId()).toList(),
+                roomsToAttach.stream().map(Room::getId).toList(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate());
 
@@ -298,7 +306,7 @@ public class BookingServiceImpl implements BookingService {
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(totalNewRooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(totalNewRooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -311,14 +319,14 @@ public class BookingServiceImpl implements BookingService {
 
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId).
                 stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -338,7 +346,9 @@ public class BookingServiceImpl implements BookingService {
                 .map(booking->{
                     PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
                     List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(
-                            roomsByBookingId.getOrDefault(booking.getBookingId(), List.of())
+                            roomsByBookingId.getOrDefault(booking.getBookingId(), List.of()),
+                            booking.getCheckInDate(),
+                            booking.getCheckOutDate()
                     );
                     return BookingMapper.mapBookingToAdminResponseDto(booking, propertySummaryDto, roomLineItemDtos);
                 })
@@ -385,7 +395,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         //Validate total No. of guests fits room
-        int totalCapacity = rooms.stream().mapToInt(room -> room.getMaxOccupancy()).sum();
+        int totalCapacity = rooms.stream().mapToInt(Room::getMaxOccupancy).sum();
 
         if(createDto.getNoOfGuests() > totalCapacity) {
             throw new IllegalArgumentException("Selected no. of rooms cannot accommodate the number of guests");
@@ -410,11 +420,20 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(booking);
 
+        //Setting a new status field in BookingRoom
+        bookingRoomService.createBookingRooms(booking, rooms, createDto.getCheckInDate(), createDto.getCheckOutDate());
+
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, null, BookingStatus.pending, null);
+
+        //Setting a new token field in TemporaryTokenHistory
+        temporaryTokenService.createTemporaryToken(booking, token, createDto.getCheckOutDate().plusMonths(1));
+
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(property);
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, createDto.getCheckInDate(), createDto.getCheckOutDate());
 
         return BookingMapper.mapBookingToGuestResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -429,11 +448,11 @@ public class BookingServiceImpl implements BookingService {
         //Get all bookings made by guest during creation of booking
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId)
                 .stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
                 //Validate total no. of guests fits room
-        int totalCapacity = rooms.stream().mapToInt(room -> room.getMaxOccupancy()).sum();
+        int totalCapacity = rooms.stream().mapToInt(Room::getMaxOccupancy).sum();
 
         if(patchDto.getNoOfGuests() != null){
             if(patchDto.getNoOfGuests() > totalCapacity) {
@@ -455,7 +474,7 @@ public class BookingServiceImpl implements BookingService {
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToGuestResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
@@ -469,7 +488,7 @@ public class BookingServiceImpl implements BookingService {
 
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId)
                 .stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
         //Validate booking dates
@@ -483,18 +502,23 @@ public class BookingServiceImpl implements BookingService {
         //Calculating total price
         BigDecimal totalPrice = PricingCalculator.calculateTotal(rooms, amendDto.getNewCheckInDate(), amendDto.getNewCheckOutDate());
 
+        LocalDateTime now = LocalDateTime.now();
+
         //Setting data on entity
-        booking.setUpdatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(now);
         booking.setTotalPrice(totalPrice);
 
         //Save entity
         bookingRepository.save(booking);
 
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, BookingStatus.pending, BookingStatus.pending, "Guest amended the booking");
+
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, amendDto.getNewCheckInDate(), amendDto.getNewCheckOutDate());
 
         return BookingMapper.mapBookingToGuestResponseDto(booking, propertySummaryDto, roomLineItemDtos);
 
@@ -516,28 +540,23 @@ public class BookingServiceImpl implements BookingService {
 
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(bookingId)
                 .stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
-        //Setting a new status field in BookingStatusHistory
-        BookingStatusHistory statusHistory = new BookingStatusHistory();
-        statusHistory.setBooking(booking);
-        statusHistory.setFromStatus(booking.getStatus());
-        statusHistory.setToStatus(BookingStatus.cancelled);
-        statusHistory.setChangedAt(LocalDateTime.now());
-        statusHistory.setReason(cancelDto.getReason());
+        LocalDateTime now = LocalDateTime.now();
 
-        bookingStatusHistoryRepository.save(statusHistory);
+        //Setting a new status field in BookingStatusHistory
+        bookingStatusHistoryService.statusChange(booking, BookingStatus.pending, BookingStatus.cancelled, cancelDto.getReason());
 
         booking.setStatus(BookingStatus.cancelled);
-        booking.setUpdatedAt(LocalDateTime.now());
+        booking.setUpdatedAt(now);
         bookingRepository.save(booking);
 
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms, booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToGuestResponseDto(booking,  propertySummaryDto, roomLineItemDtos);
     }
@@ -550,16 +569,16 @@ public class BookingServiceImpl implements BookingService {
 
         List<Room> rooms = bookingRoomRepository.findAllByBooking_BookingId(booking.getBookingId()).
                 stream()
-                .map(bookingRoom -> bookingRoom.getRoom())
+                .map(BookingRoom::getRoom)
                 .toList();
 
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(booking.getProperty());
 
         //Map to RoomLineItemDto
-        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms);
+        List<RoomLineItemDto> roomLineItemDtos = RoomMapper.mapRoomToRoomLineDto(rooms,  booking.getCheckInDate(), booking.getCheckOutDate());
 
         return BookingMapper.mapBookingToGuestResponseDto(booking, propertySummaryDto, roomLineItemDtos);
     }
-    
+
 }

@@ -1,6 +1,7 @@
 package com.ghm.guesthousemanagementsystem.service;
 
 import com.ghm.guesthousemanagementsystem.dto.booking.*;
+import com.ghm.guesthousemanagementsystem.entity.Booking;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +25,5 @@ public interface BookingService {
     BookingGuestResponseDto amendBooking(UUID bookingId, BookingAmendRequestDto amendDto);
     BookingGuestResponseDto cancelBookingAsGuest(UUID bookingId, BookingCancelRequestDto cancelDto);
     BookingGuestResponseDto getBookingByToken(String token);
-
 
 }
