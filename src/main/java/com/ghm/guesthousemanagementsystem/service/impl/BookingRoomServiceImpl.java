@@ -43,6 +43,7 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     }
 
     @Override
+    @Transactional
     public void createBookingRooms(Booking booking, List<Room> rooms, LocalDate checkInDate, LocalDate checkOutDate){
 
         List<BookingRoom> bookingRooms = rooms.stream()
@@ -53,6 +54,7 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     }
 
     @Override
+    @Transactional
     public void updateBookingRooms(Booking booking, List<Room> rooms, LocalDate checkInDate, LocalDate checkOutDate) {
 
         bookingRoomRepository.deleteAllByBooking(booking);

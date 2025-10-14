@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin/temporary-token")
+@RequestMapping("/api/temporary-token/admin")
 @RequiredArgsConstructor
 public class TemporaryTokenController {
 

@@ -21,6 +21,7 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -72,10 +73,12 @@ public class Property {
     @Column(name = "coverImageUrl")
     private String coverImageUrl;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "property",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
     )
     private List<Room> rooms = new ArrayList<>();
 

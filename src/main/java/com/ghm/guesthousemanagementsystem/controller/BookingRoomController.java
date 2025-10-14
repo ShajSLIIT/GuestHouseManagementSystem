@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/booking-rooms")
+@RequestMapping("/api/booking-rooms/admin")
 @RequiredArgsConstructor
 public class BookingRoomController {
 
-    BookingRoomService bookingRoomService;
+    private final BookingRoomService bookingRoomService;
 
-    @GetMapping("/{bookingId}")
+    @GetMapping("/{bookingId}/get")
     public ResponseEntity<List<Room>> getRoomsByBookingId(@PathVariable UUID bookingId){
         List<Room> rooms = bookingRoomService.getRoomsByBookingId(bookingId);
         return ResponseEntity.ok(rooms);

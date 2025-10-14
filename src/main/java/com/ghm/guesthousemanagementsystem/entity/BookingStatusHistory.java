@@ -1,5 +1,6 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
@@ -24,6 +25,7 @@ public class BookingStatusHistory {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY) // LAZY avoids heavy joins unless needed
     @JoinColumn(name = "booking_id", nullable = false) // FK column
     private Booking booking;
