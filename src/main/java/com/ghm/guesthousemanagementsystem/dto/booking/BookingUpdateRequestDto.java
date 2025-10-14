@@ -17,9 +17,11 @@ public class BookingUpdateRequestDto {
     @Size(min = 3, max = 200)
     private String guestName;
 
+    @NotBlank
     @Email
     private String guestEmail;
 
+    @NotBlank
     private String guestPhone;
 
     @NotNull
@@ -28,14 +30,17 @@ public class BookingUpdateRequestDto {
     @NotNull
     private LocalDate checkOutDate;
 
+    @NotNull
     @Min(1) //Include max as well
     private Integer noOfRooms;
 
+    @NotNull
     @Min(1) //Include max as well
     private Integer noOfGuests;
 
     private String notes;
 
+    @NotNull
     private List<UUID> roomIds;
 
 }

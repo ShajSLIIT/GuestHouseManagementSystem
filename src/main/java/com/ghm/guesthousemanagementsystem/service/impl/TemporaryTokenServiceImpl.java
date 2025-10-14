@@ -10,7 +10,7 @@ import com.ghm.guesthousemanagementsystem.mapper.TemporaryTokenMapper;
 import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
 import com.ghm.guesthousemanagementsystem.repository.TemporaryTokenRepository;
 import com.ghm.guesthousemanagementsystem.service.TemporaryTokenService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TemporaryTokenServiceImpl implements TemporaryTokenService {
 
     private final BookingRepository bookingRepository;

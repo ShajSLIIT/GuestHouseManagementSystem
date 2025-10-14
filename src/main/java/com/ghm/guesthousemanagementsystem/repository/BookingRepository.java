@@ -27,6 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
         JOIN BookingRoom br ON br.booking = b
         WHERE br.room.id IN :roomIds
             AND b.status IN :statuses
+            AND (:excludeBookingId IS NULL OR br.booking.bookingId <> :excludeBookingId)
             AND b.checkInDate < :checkOut
             AND b.checkOutDate > :checkIn
         """)
@@ -34,7 +35,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("roomIds") List<UUID> roomIds,
             @Param("statuses") List<BookingStatus> statuses,
             @Param("checkIn") LocalDate checkInDate,
-            @Param("checkOut") LocalDate checkOutDate
+            @Param("checkOut") LocalDate checkOutDate,
+            @Param("excludeBookingId") UUID excludeBookingId
     );
 
 

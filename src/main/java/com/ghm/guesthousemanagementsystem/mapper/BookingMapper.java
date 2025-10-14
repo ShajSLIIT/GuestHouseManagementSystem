@@ -101,6 +101,7 @@ public class BookingMapper {
         newResponseDto.setTotalPrice(booking.getTotalPrice());
         newResponseDto.setConfirmedAt(booking.getConfirmedAt());
         newResponseDto.setNotes(booking.getNotes());
+        newResponseDto.setToken(booking.getToken());
 
         return newResponseDto;
     }

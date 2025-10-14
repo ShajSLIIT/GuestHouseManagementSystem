@@ -9,10 +9,10 @@ import com.ghm.guesthousemanagementsystem.mapper.BookingStatusHistoryMapper;
 import com.ghm.guesthousemanagementsystem.repository.BookingStatusHistoryRepository;
 import com.ghm.guesthousemanagementsystem.service.BookingStatusHistoryService;
 import jakarta.annotation.Nullable;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryService {
 
     private final BookingStatusHistoryRepository bookingStatusHistoryRepository;

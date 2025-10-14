@@ -12,19 +12,19 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin/status-history")
 @RequiredArgsConstructor
 public class BookingStatusHistoryController {
 
     private final BookingStatusHistoryService bookingStatusHistoryService;
 
-    @GetMapping("/admin/bookings/{id}/status-history")
+    @GetMapping("/{id}")
     public ResponseEntity<List<BookingStatusHistoryResponseDto>> getStatusHistoryByBookingId(@PathVariable UUID id){
         List<BookingStatusHistoryResponseDto> history = bookingStatusHistoryService.getStatusHistoryByBookingId(id);
         return ResponseEntity.ok(history);
     }
 
-    @GetMapping("/admin/bookings/status-history")
+    @GetMapping("/filter")
     public ResponseEntity<List<BookingStatusHistoryResponseDto>> getStatusHistory(
             @RequestParam(required = false) BookingStatus status){
 
@@ -36,11 +36,10 @@ public class BookingStatusHistoryController {
         }
     }
 
-    @GetMapping("/admin/bookings/status-history/current")
+    @GetMapping("/current")
     public ResponseEntity<List<BookingStatusWithTimestampResponseDto>> getBookingByCurrentStatus(
             @RequestParam BookingStatus status){
         List<BookingStatusWithTimestampResponseDto> history = bookingStatusHistoryService.getBookingByCurrentStatus(status);
         return ResponseEntity.ok(history);
     }
-
 }

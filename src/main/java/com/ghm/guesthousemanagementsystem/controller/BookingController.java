@@ -23,7 +23,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    @PutMapping("/admin/{id}")
+    @PutMapping("/admin/{id}/update")
     public ResponseEntity<BookingAdminResponseDto> updateBooking(
                     @PathVariable UUID id,
                     @Valid @RequestBody BookingUpdateRequestDto bookingUpdateRequestDto)
@@ -55,19 +55,19 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    @GetMapping("/admin/{id}")
+    @GetMapping("/admin/{id}/get")
     public ResponseEntity<BookingAdminResponseDto> getBookingById(@PathVariable UUID id){
         BookingAdminResponseDto booking = bookingService.getBookingById(id);
         return ResponseEntity.ok(booking);
     }
 
-    @GetMapping("/admin")
+    @GetMapping("/admin/get-all")
     public ResponseEntity<List<BookingAdminResponseDto>> getAllBookingsAsAdmin(){
         List<BookingAdminResponseDto> bookings = bookingService.getAllBookingsAsAdmin();
         return ResponseEntity.ok(bookings);
     }
 
-    @GetMapping("/admin/summary")
+    @GetMapping("/admin/get-all-summary")
     public ResponseEntity<List<BookingSummaryResponseDto>> getAllBookingSummariesAsAdmin(){
         List<BookingSummaryResponseDto> bookings = bookingService.getAllBookingSummariesAsAdmin();
         return ResponseEntity.ok(bookings);
@@ -79,7 +79,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    @PatchMapping("/guest/{id}")
+    @PatchMapping("/guest/{id}/patch")
     public ResponseEntity<BookingGuestResponseDto> patchBooking(
                     @PathVariable UUID id,
                     @Valid @RequestBody BookingPatchRequestDto patchDto)
@@ -106,7 +106,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    @GetMapping("/guest/{token}")
+    @GetMapping("/guest/{token}/get")
     public ResponseEntity<BookingGuestResponseDto> getBookingByToken(@PathVariable String token)
     {
         BookingGuestResponseDto booking = bookingService.getBookingByToken(token);
