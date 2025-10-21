@@ -1,4 +1,4 @@
-package com.ghm.guesthousemanagementsystem;
+package com.naveen.guesthousemanagementsystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
