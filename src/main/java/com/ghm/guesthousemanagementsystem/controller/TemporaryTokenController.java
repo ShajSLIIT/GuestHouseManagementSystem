@@ -4,7 +4,7 @@ import com.ghm.guesthousemanagementsystem.dto.temporarytoken.TemporaryTokenReque
 import com.ghm.guesthousemanagementsystem.dto.temporarytoken.TemporaryTokenResponseDto;
 import com.ghm.guesthousemanagementsystem.entity.Booking;
 import com.ghm.guesthousemanagementsystem.entity.TemporaryToken;
-import com.ghm.guesthousemanagementsystem.exceptions.ResourceNotFoundException;
+import com.ghm.guesthousemanagementsystem.exception.ResourceNotFoundException;
 import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
 import com.ghm.guesthousemanagementsystem.service.TemporaryTokenService;
 import lombok.RequiredArgsConstructor;

@@ -49,29 +49,6 @@ public class Property {
 
     private String name;
     private String description;
-    private String location;
-    private String city;
-    private String country;
-
-    @Column(name = "is_active")
-    private Boolean isActive;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @Column(name = "total_rooms")
-    private Integer totalRooms;
-    @Column(name = "check_in_time")
-    private java.time.LocalTime checkInTime;
-
-    @Column(nullable = false)
-    private String email;
-
-    @Column(name = "check_out_time")
-    private java.time.LocalTime checkOutTime;
-
-    @Column(name = "coverImageUrl")
-    private String coverImageUrl;
 
     @JsonIgnore
     @OneToMany(
@@ -81,13 +58,5 @@ public class Property {
             fetch = FetchType.LAZY
     )
     private List<Room> rooms = new ArrayList<>();
-
-    public void addRooms(Room room){
-        this.rooms.add(room);
-    }
-    public void removeRoom(Room room){
-        this.rooms.remove(room);
-    }
-
 }
 

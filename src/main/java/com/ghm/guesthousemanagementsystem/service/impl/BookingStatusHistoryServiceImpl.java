@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
         history.setBooking(booking);
         history.setFromStatus(fromStatus);
         history.setToStatus(toStatus);
+        history.setChangedAt(LocalDateTime.now());
 
         if(reason != null &&  !reason.isBlank()) {
             history.setReason(reason);

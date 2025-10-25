@@ -1,4 +1,4 @@
-package com.ghm.guesthousemanagementsystem.exceptions;
+package com.ghm.guesthousemanagementsystem.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

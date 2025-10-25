@@ -1,10 +1,11 @@
 package com.ghm.guesthousemanagementsystem.service.impl;
 
+import com.ghm.guesthousemanagementsystem.dto.bookingroom.DateRangeDto;
 import com.ghm.guesthousemanagementsystem.entity.Booking;
 import com.ghm.guesthousemanagementsystem.entity.BookingRoom;
 import com.ghm.guesthousemanagementsystem.entity.Room;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
-import com.ghm.guesthousemanagementsystem.exceptions.RoomUnavailableException;
+import com.ghm.guesthousemanagementsystem.exception.RoomUnavailableException;
 import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
 import com.ghm.guesthousemanagementsystem.repository.BookingRoomRepository;
 import com.ghm.guesthousemanagementsystem.service.BookingRoomService;
@@ -14,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +39,27 @@ public class BookingRoomServiceImpl implements BookingRoomService {
         if(!overlappingBookings.isEmpty()) {
             throw new RoomUnavailableException("Some rooms are not available for the selected dates.");
         }
+    }
+
+    @Override
+    public Map<UUID, List<DateRangeDto>> getBookedDateRangesByProperty(UUID propertyId) {
+        List<Object[]> results = bookingRepository.findBookedDateRangesByProperty(
+                propertyId,
+                List.of(BookingStatus.pending, BookingStatus.confirmed)
+        );
+
+        Map<UUID, List<DateRangeDto>> map = new HashMap<>();
+
+        for (Object[] row : results) {
+            UUID roomId = (UUID) row[0];
+            LocalDate checkIn = (LocalDate) row[1];
+            LocalDate checkOut = (LocalDate) row[2];
+
+            map.computeIfAbsent(roomId, id -> new ArrayList<>())
+                    .add(new DateRangeDto(checkIn, checkOut));
+        }
+
+        return map;
     }
 
     @Override
@@ -82,9 +102,8 @@ public class BookingRoomServiceImpl implements BookingRoomService {
 
         return bookingRooms.stream()
                 .collect(Collectors.groupingBy(
-                    br->br.getBooking().getBookingId(),
+                        br->br.getBooking().getBookingId(),
                         Collectors.mapping(BookingRoom::getRoom, Collectors.toList())
                 ));
     }
-
 }

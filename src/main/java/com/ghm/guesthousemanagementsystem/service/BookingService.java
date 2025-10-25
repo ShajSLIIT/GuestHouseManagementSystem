@@ -5,6 +5,7 @@ import com.ghm.guesthousemanagementsystem.entity.Booking;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface BookingService {
@@ -21,9 +22,9 @@ public interface BookingService {
 
     //Guest
     BookingGuestResponseDto createBookingAsGuest(BookingCreateRequestDto createDto);
-    BookingGuestResponseDto patchBooking(UUID bookingId, BookingPatchRequestDto patchDto);
-    BookingGuestResponseDto amendBooking(UUID bookingId, BookingAmendRequestDto amendDto);
-    BookingGuestResponseDto cancelBookingAsGuest(UUID bookingId, BookingCancelRequestDto cancelDto);
-    BookingGuestResponseDto getBookingByToken(String token);
+    BookingGuestResponseDto patchBooking(String referenceId, BookingPatchRequestDto patchDto);
+    BookingGuestResponseDto amendBooking(String referenceId, BookingAmendRequestDto amendDto);
+    BookingGuestResponseDto cancelBookingAsGuest(String referenceId, BookingCancelRequestDto cancelDto);
+    BookingGuestResponseDto getBookingByReferenceId(String referenceId);
 
 }
