@@ -1,7 +1,6 @@
 package com.ghm.guesthousemanagementsystem.dto;
 
 import lombok.*;
-
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +24,7 @@ public class PropertyDetailsDto {
     private LocalTime checkInTime;
     private LocalTime checkOutTime;
     private String coverImageUrl;
+    private List<String> photoUrls;  // all photos for this property
 
     private List<RoomDto> rooms;     // nested rooms
 

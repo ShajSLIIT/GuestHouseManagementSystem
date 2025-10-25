@@ -1,0 +1,22 @@
+package com.ghm.guesthousemanagementsystem.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RoomLineItemDto {
+
+    private UUID roomId;
+    private String roomNumber;
+    private long noOfNights;
+    private BigDecimal pricePerNight;
+    private BigDecimal lineTotal;
+}
