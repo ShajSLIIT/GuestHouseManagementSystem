@@ -1,6 +1,5 @@
 package com.ghm.guesthousemanagementsystem.entity;
 
-import com.ghm.guesthousemanagementsystem.entity.Property;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

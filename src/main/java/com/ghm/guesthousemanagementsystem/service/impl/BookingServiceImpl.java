@@ -111,8 +111,6 @@ public class BookingServiceImpl implements BookingService {
         //Setting a new token field in TemporaryTokenHistory
         temporaryTokenService.createTemporaryToken(booking, token, createDto.getCheckOutDate().plusMonths(1));
 
-
-
         //Map to PropertySummaryDto
         PropertySummaryDto propertySummaryDto = PropertyMapper.mapPropertyToPropertySummaryDto(property);
 

@@ -19,7 +19,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingGuestResponseDto {
-    private UUID bookingId;
+
+    private String token;
     private PropertySummaryDto property;
     private List<RoomLineItemDto> rooms;
     private String referenceId;
@@ -35,5 +36,4 @@ public class BookingGuestResponseDto {
     private BigDecimal totalPrice;
     private LocalDateTime confirmedAt;
     private String notes;
-    private String token;
 }

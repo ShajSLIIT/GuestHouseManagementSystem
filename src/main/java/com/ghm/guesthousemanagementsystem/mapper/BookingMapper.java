@@ -21,7 +21,6 @@ public class BookingMapper {
         newCreateBooking.setNoOfGuests(createDto.getNoOfGuests());
         newCreateBooking.setNotes(createDto.getNotes());
         newCreateBooking.setProperty(property);
-
         return newCreateBooking;
     }
 
@@ -85,7 +84,7 @@ public class BookingMapper {
                                                                        List<RoomLineItemDto> rooms){
         BookingGuestResponseDto newResponseDto = new BookingGuestResponseDto();
 
-        newResponseDto.setBookingId(booking.getBookingId());
+        newResponseDto.setToken(booking.getToken());
         newResponseDto.setProperty(propertySummaryDto);
         newResponseDto.setRooms(rooms);
         newResponseDto.setReferenceId(booking.getReferenceId());
@@ -101,7 +100,6 @@ public class BookingMapper {
         newResponseDto.setTotalPrice(booking.getTotalPrice());
         newResponseDto.setConfirmedAt(booking.getConfirmedAt());
         newResponseDto.setNotes(booking.getNotes());
-        newResponseDto.setToken(booking.getToken());
 
         return newResponseDto;
     }

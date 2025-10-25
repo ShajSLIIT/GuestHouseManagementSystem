@@ -23,6 +23,7 @@ public class RoomMapper {
         for (Room room : rooms){
             RoomLineItemDto roomLineItemDto = new RoomLineItemDto();
 
+            roomLineItemDto.setRoomId(room.getId());
             roomLineItemDto.setRoomNumber(room.getRoomNumber());
             roomLineItemDto.setNoOfNights(days);
             roomLineItemDto.setPricePerNight(room.getPricePerNight());

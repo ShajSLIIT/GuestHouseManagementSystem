@@ -16,6 +16,8 @@ public interface BookingRoomRepository extends JpaRepository<BookingRoom, UUID> 
 
     List<BookingRoom> findAllByBooking_BookingId(UUID bookingId);
 
+    List<BookingRoom> findAllByRoom(Room room);
+
     void deleteAllByBooking(Booking booking);
 
     List<BookingRoom> findAllByBooking_BookingIdIn(List<UUID> bookingIds);

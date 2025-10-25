@@ -14,6 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RoomLineItemDto {
 
+    private UUID roomId;
     private String roomNumber;
     private long noOfNights;
     private BigDecimal pricePerNight;
