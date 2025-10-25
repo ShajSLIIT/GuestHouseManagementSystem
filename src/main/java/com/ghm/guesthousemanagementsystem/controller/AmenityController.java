@@ -3,7 +3,6 @@ package com.ghm.guesthousemanagementsystem.controller;
 import com.ghm.guesthousemanagementsystem.dto.AmenityCreateDto;
 import com.ghm.guesthousemanagementsystem.dto.AmenityDto;
 import com.ghm.guesthousemanagementsystem.service.AmenityService;
-import com.ghm.guesthousemanagementsystem.service.impl.AmenityServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

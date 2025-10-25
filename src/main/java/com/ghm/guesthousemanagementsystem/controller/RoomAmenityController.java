@@ -2,7 +2,6 @@ package com.ghm.guesthousemanagementsystem.controller;
 
 import com.ghm.guesthousemanagementsystem.dto.RoomAmenityCreateDto;
 import com.ghm.guesthousemanagementsystem.dto.RoomAmenityDto;
-import com.ghm.guesthousemanagementsystem.entity.Room;
 import com.ghm.guesthousemanagementsystem.service.RoomAmenityService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
