@@ -10,8 +10,9 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PropertyDto {
+public class PropertySummaryDto {
     private UUID id;
+    private String description;
     private String name;
     private String location;
     private String city;
