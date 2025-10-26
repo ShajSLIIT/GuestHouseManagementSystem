@@ -1,9 +1,10 @@
-package com.naveen.guesthousemanagementsystem.service;
+package com.ghm.guesthousemanagementsystem.service;
 
 
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
-import com.naveen.guesthousemanagementsystem.entity.Addon;
+
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
+import com.ghm.guesthousemanagementsystem.entity.Addon;
 
 import java.util.List;
 import java.util.UUID;

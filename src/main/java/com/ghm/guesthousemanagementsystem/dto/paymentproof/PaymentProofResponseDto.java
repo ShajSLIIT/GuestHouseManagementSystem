@@ -1,5 +1,5 @@
 // PaymentProofResponseDto.java
-package com.naveen.guesthousemanagementsystem.dto.paymentproof;
+package com.ghm.guesthousemanagementsystem.dto.paymentproof;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

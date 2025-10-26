@@ -1,15 +1,15 @@
-package com.naveen.guesthousemanagementsystem.service.impl;
+package com.ghm.guesthousemanagementsystem.service.impl;
 
 
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonSummaryResponseDto;
-import com.naveen.guesthousemanagementsystem.dto.bookingaddon.BookingAddonResponseDto;
-import com.naveen.guesthousemanagementsystem.entity.Addon;
-import com.naveen.guesthousemanagementsystem.entity.Booking;
-import com.naveen.guesthousemanagementsystem.entity.BookingAddon;
-import com.naveen.guesthousemanagementsystem.exeption.ResourceNotFoundException;
-import com.naveen.guesthousemanagementsystem.repository.BookingAddonRepository;
-import com.naveen.guesthousemanagementsystem.repository.BookingRepository;
-import com.naveen.guesthousemanagementsystem.service.BookingAddonService;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonSummaryResponseDto;
+import com.ghm.guesthousemanagementsystem.entity.Addon;
+import com.ghm.guesthousemanagementsystem.entity.Booking;
+import com.ghm.guesthousemanagementsystem.entity.BookingAddon;
+import com.ghm.guesthousemanagementsystem.exeption.ResourceNotFoundException;
+import com.ghm.guesthousemanagementsystem.repository.BookingAddonRepository;
+import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
+import com.ghm.guesthousemanagementsystem.service.BookingAddonService;
+import com.ghm.guesthousemanagementsystem.dto.bookingaddon.BookingAddonResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class BookingAddonServiceImpl implements BookingAddonService {
     private final AddonServiceImpl addonServiceImpl;
     private final BookingRepository bookingRepository;  // ← Use repository instead of service
 
-    // ====================== MAIN METHOD: Attach addons using Booking entity ======================
+    // Attach addons using Booking entity
     @Transactional
     @Override
     public void createBookingAddon(Booking booking, List<UUID> addonIds) {
@@ -63,7 +63,7 @@ public class BookingAddonServiceImpl implements BookingAddonService {
         log.info("Successfully attached addons to booking: {}", booking.getBookingId());
     }
 
-    // ====================== OVERLOADED METHOD: For backward compatibility ======================
+    // OVERLOADED METHOD: For backward compatibility
     @Transactional
     @Override
     public void createBookingAddon(UUID bookingId, List<UUID> addonIds) {
@@ -71,7 +71,7 @@ public class BookingAddonServiceImpl implements BookingAddonService {
         createBookingAddon(booking, addonIds);
     }
 
-    // ====================== GET ADDONS FOR BOOKING ======================
+    // GET ADDONS FOR BOOKING
     @Override
     public Map<UUID, List<AddonSummaryResponseDto>> getAddonsForMultipleBookings(List<UUID> bookingIds) {
         log.debug("Fetching addons for multiple booking IDs: {}", bookingIds);
@@ -99,7 +99,8 @@ public class BookingAddonServiceImpl implements BookingAddonService {
         return dto;
     }
 
-    // ====================== CALCULATE ADDONS TOTAL ======================
+    // CALCULATE ADDONS TOTAL
+    @Transactional
     @Override
     public BigDecimal calculateAddonsTotal(UUID bookingId) {
         log.debug("Calculating addons total for booking ID: {}", bookingId);
@@ -109,26 +110,18 @@ public class BookingAddonServiceImpl implements BookingAddonService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // ====================== CLEANUP METHODS ======================
-//    @Transactional
-//    public void cleanupAddonsForBooking(Booking booking) {
-//        log.info("Cleaning up addons for booking: {}", booking.getBookingId());
-//        bookingAddonRepository.deleteByBooking(booking);
-//        log.info("Successfully cleaned up addons for booking: {}", booking.getBookingId());
-//    }
 
     @Transactional
     @Override
     public void cleanupAddonsForBooking(UUID bookingId) {
         Booking booking = findBookingEntityById(bookingId);
-//        cleanupAddonsForBooking(booking);
         log.info("Cleaning up addons for booking: {}", booking.getBookingId());
         bookingAddonRepository.deleteByBooking(booking);
         log.info("Successfully cleaned up addons for booking: {}", booking.getBookingId());
     }
 
 
-    // ====================== MONITORING METHODS ======================
+    // MONITORING METHODS
     @Override
     public List<BookingAddon> getAllBookingAddonsWithDetails() {
         return bookingAddonRepository.findAllWithDetails();
@@ -144,7 +137,7 @@ public class BookingAddonServiceImpl implements BookingAddonService {
         return bookingAddonRepository.count();
     }
 
-    // ====================== PRIVATE HELPER METHOD ======================
+    // PRIVATE HELPER METHOD
     @Override
     public Booking findBookingEntityById(UUID bookingId) {
         return bookingRepository.findById(bookingId)
@@ -152,7 +145,7 @@ public class BookingAddonServiceImpl implements BookingAddonService {
                         "Booking not found with id: " + bookingId));
     }
 
-    // ====================== CONVERSION METHOD ======================
+    // CONVERSION METHOD
     @Override
     public BookingAddonResponseDto convertToResponseDto(BookingAddon bookingAddon) {
         BookingAddonResponseDto dto = new BookingAddonResponseDto();
@@ -172,7 +165,6 @@ public class BookingAddonServiceImpl implements BookingAddonService {
                 .collect(Collectors.toList());
     }
 
-    // Also add this method to get addons mapped by booking IDs
     @Override
     public Map<UUID, List<Addon>> getAddonsByBookingIds(List<UUID> bookingIds) {
         List<BookingAddon> bookingAddons = bookingAddonRepository.findByBookingIdIn(bookingIds);

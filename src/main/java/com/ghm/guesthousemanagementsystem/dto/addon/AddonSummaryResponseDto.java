@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.dto.addon;
+package com.ghm.guesthousemanagementsystem.dto.addon;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

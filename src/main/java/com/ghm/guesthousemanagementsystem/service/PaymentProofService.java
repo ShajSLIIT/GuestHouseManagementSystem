@@ -1,9 +1,8 @@
 // PaymentProofService.java
-package com.naveen.guesthousemanagementsystem.service;
+package com.ghm.guesthousemanagementsystem.service;
 
-
-import com.naveen.guesthousemanagementsystem.dto.paymentproof.PaymentProofResponseDto;
-import com.naveen.guesthousemanagementsystem.dto.paymentproof.PaymentProofUploadRequestDto;
+import com.ghm.guesthousemanagementsystem.dto.paymentproof.PaymentProofResponseDto;
+import com.ghm.guesthousemanagementsystem.dto.paymentproof.PaymentProofUploadRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;

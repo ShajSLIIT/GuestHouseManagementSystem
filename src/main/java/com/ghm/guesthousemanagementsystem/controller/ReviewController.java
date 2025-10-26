@@ -1,5 +1,7 @@
-package com.naveen.guesthousemanagementsystem.controller;
+package com.ghm.guesthousemanagementsystem.controller;
 
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewResponseDTO;
 import com.ghm.guesthousemanagementsystem.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    // ====================== ADMIN ENDPOINTS ======================
+    // ADMIN ENDPOINTS
 
     @GetMapping("/admin")
     public ResponseEntity<List<ReviewResponseDTO>> getAllReviews() {
@@ -45,7 +47,7 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
-    // ====================== GUEST ENDPOINTS ======================
+    // GUEST ENDPOINTS
 
     @PostMapping("/guest")
     public ResponseEntity<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO reviewRequestDTO) {

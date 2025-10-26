@@ -1,15 +1,14 @@
 // PaymentProofServiceImpl.java
-package com.naveen.guesthousemanagementsystem.service.impl;
+package com.ghm.guesthousemanagementsystem.service.impl;
 
-
-import com.naveen.guesthousemanagementsystem.dto.paymentproof.PaymentProofResponseDto;
-import com.naveen.guesthousemanagementsystem.dto.paymentproof.PaymentProofUploadRequestDto;
-import com.naveen.guesthousemanagementsystem.entity.Booking;
-import com.naveen.guesthousemanagementsystem.entity.PaymentProof;
-import com.naveen.guesthousemanagementsystem.exeption.ResourceNotFoundException;
-import com.naveen.guesthousemanagementsystem.repository.BookingRepository;
-import com.naveen.guesthousemanagementsystem.repository.PaymentProofRepository;
-import com.naveen.guesthousemanagementsystem.service.PaymentProofService;
+import com.ghm.guesthousemanagementsystem.dto.paymentproof.PaymentProofResponseDto;
+import com.ghm.guesthousemanagementsystem.dto.paymentproof.PaymentProofUploadRequestDto;
+import com.ghm.guesthousemanagementsystem.entity.Booking;
+import com.ghm.guesthousemanagementsystem.entity.PaymentProof;
+import com.ghm.guesthousemanagementsystem.exeption.ResourceNotFoundException;
+import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
+import com.ghm.guesthousemanagementsystem.repository.PaymentProofRepository;
+import com.ghm.guesthousemanagementsystem.service.PaymentProofService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

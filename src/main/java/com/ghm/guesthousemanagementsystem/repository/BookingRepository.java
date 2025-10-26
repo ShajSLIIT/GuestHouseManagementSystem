@@ -1,7 +1,7 @@
-package com.naveen.guesthousemanagementsystem.repository;
+package com.ghm.guesthousemanagementsystem.repository;
 
 
-import com.naveen.guesthousemanagementsystem.entity.Booking;
+import com.ghm.guesthousemanagementsystem.entity.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

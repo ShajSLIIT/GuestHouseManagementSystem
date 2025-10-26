@@ -1,8 +1,9 @@
-package com.naveen.guesthousemanagementsystem.repository;
+package com.ghm.guesthousemanagementsystem.repository;
 
 
-import com.naveen.guesthousemanagementsystem.entity.Booking;
-import com.naveen.guesthousemanagementsystem.entity.BookingAddon;
+
+import com.ghm.guesthousemanagementsystem.entity.Booking;
+import com.ghm.guesthousemanagementsystem.entity.BookingAddon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,15 +23,11 @@ public interface BookingAddonRepository extends JpaRepository<BookingAddon, UUID
 
     void deleteByBooking(Booking booking);
 
-    void deleteByBookingBookingId(UUID bookingId);
-
     @Query("SELECT ba FROM BookingAddon ba JOIN FETCH ba.addon JOIN FETCH ba.booking")
     List<BookingAddon> findAllWithDetails();
 
     @Query("SELECT DISTINCT ba.booking FROM BookingAddon ba")
     List<Booking> findDistinctBookingsWithAddons();
-
-    long countByBooking(Booking booking);
 
 
     // In BookingAddonRepository

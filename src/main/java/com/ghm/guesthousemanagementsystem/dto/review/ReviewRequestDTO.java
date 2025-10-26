@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.dto.review;
+package com.ghm.guesthousemanagementsystem.dto.review;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

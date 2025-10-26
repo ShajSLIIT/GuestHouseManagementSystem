@@ -1,10 +1,9 @@
-package com.naveen.guesthousemanagementsystem.mapper;
+package com.ghm.guesthousemanagementsystem.mapper;
 
-
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonSummaryResponseDto;
-import com.naveen.guesthousemanagementsystem.entity.Addon;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonSummaryResponseDto;
+import com.ghm.guesthousemanagementsystem.entity.Addon;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

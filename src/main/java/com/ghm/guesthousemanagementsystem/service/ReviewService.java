@@ -1,8 +1,8 @@
-package com.naveen.guesthousemanagementsystem.service;
+package com.ghm.guesthousemanagementsystem.service;
 
 
-import com.naveen.guesthousemanagementsystem.dto.review.ReviewRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.review.ReviewResponseDTO;
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

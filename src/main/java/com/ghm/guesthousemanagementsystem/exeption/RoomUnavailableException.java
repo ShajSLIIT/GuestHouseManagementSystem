@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.exeption;
+package com.ghm.guesthousemanagementsystem.exeption;
 
 public class RoomUnavailableException extends RuntimeException {
     public RoomUnavailableException(String message) {

@@ -1,15 +1,14 @@
-package com.naveen.guesthousemanagementsystem.service.impl;
+package com.ghm.guesthousemanagementsystem.service.impl;
 
 
-import com.naveen.guesthousemanagementsystem.dto.review.ReviewRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.review.ReviewResponseDTO;
-import com.naveen.guesthousemanagementsystem.entity.Booking;
-import com.naveen.guesthousemanagementsystem.entity.Review;
-import com.naveen.guesthousemanagementsystem.exeption.ResourceNotFoundException;
-import com.naveen.guesthousemanagementsystem.mapper.ReviewMapper;
-import com.naveen.guesthousemanagementsystem.repository.BookingRepository;
-import com.naveen.guesthousemanagementsystem.repository.ReviewRepository;
-import com.naveen.guesthousemanagementsystem.service.ReviewService;
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.review.ReviewResponseDTO;
+import com.ghm.guesthousemanagementsystem.entity.Booking;
+import com.ghm.guesthousemanagementsystem.entity.Review;
+import com.ghm.guesthousemanagementsystem.exeption.ResourceNotFoundException;
+import com.ghm.guesthousemanagementsystem.mapper.ReviewMapper;
+import com.ghm.guesthousemanagementsystem.repository.BookingRepository;
+import com.ghm.guesthousemanagementsystem.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewMapper reviewMapper;
     private final BookingRepository bookingRepository;
 
-    // ====================== ADMIN METHODS ======================
+    // ADMIN METHODS
 
     @Override
     @Transactional(readOnly = true)
@@ -79,7 +78,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
 
-    // ====================== GUEST METHODS ======================
+    // GUEST METHODS
 
     @Override
     public ReviewResponseDTO createReview(ReviewRequestDTO reviewRequestDTO) {
@@ -143,7 +142,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(review);
     }
 
-    // ====================== PROPERTY RATING METHODS ======================
+    //  PROPERTY RATING METHODS
 
     @Override
     @Transactional(readOnly = true)
@@ -248,7 +247,7 @@ public class ReviewServiceImpl implements ReviewService {
         );
     }
 
-    // ====================== PRIVATE HELPER METHODS ======================
+    // PRIVATE HELPER METHODS
 
     private void validateReviewEligibility(Booking booking) {
         if (booking.getStatus() != BookingStatus.confirmed) {

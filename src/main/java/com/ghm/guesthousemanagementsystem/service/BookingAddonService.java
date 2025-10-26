@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.service;
+package com.ghm.guesthousemanagementsystem.service;
 
 
 import com.naveen.guesthousemanagementsystem.dto.addon.AddonSummaryResponseDto;

@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.entity;
+package com.ghm.guesthousemanagementsystem.entity;
 
 //import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 

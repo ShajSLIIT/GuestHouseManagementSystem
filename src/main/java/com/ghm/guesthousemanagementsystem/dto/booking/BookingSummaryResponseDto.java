@@ -1,4 +1,4 @@
-package com.naveen.guesthousemanagementsystem.dto.booking;
+package com.ghm.guesthousemanagementsystem.dto.booking;
 
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import lombok.AllArgsConstructor;

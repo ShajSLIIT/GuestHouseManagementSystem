@@ -1,7 +1,7 @@
-package com.naveen.guesthousemanagementsystem.service;
+package com.ghm.guesthousemanagementsystem.service;
 
 
-import com.naveen.guesthousemanagementsystem.dto.booking.*;
+import com.ghm.guesthousemanagementsystem.dto.booking.*;
 
 import java.util.List;
 import java.util.UUID;

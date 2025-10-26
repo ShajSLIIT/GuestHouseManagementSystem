@@ -1,14 +1,14 @@
-package com.naveen.guesthousemanagementsystem.service.impl;
+package com.ghm.guesthousemanagementsystem.service.impl;
 
 
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
-import com.naveen.guesthousemanagementsystem.entity.Addon;
-import com.naveen.guesthousemanagementsystem.exeption.DuplicateResourceException;
-import com.naveen.guesthousemanagementsystem.exeption.ResourceNotFoundException;
-import com.naveen.guesthousemanagementsystem.mapper.AddonMapper;
-import com.naveen.guesthousemanagementsystem.repository.AddonRepository;
-import com.naveen.guesthousemanagementsystem.service.AddonService;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
+import com.ghm.guesthousemanagementsystem.entity.Addon;
+import com.ghm.guesthousemanagementsystem.exeption.DuplicateResourceException;
+import com.ghm.guesthousemanagementsystem.exeption.ResourceNotFoundException;
+import com.ghm.guesthousemanagementsystem.mapper.AddonMapper;
+import com.ghm.guesthousemanagementsystem.repository.AddonRepository;
+import com.ghm.guesthousemanagementsystem.service.AddonService;
 import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,6 @@ public class AddonServiceImpl implements AddonService {
                 .orElseThrow(() -> new ResourceNotFoundException("Addon not found with id: " + id));
     }
 
-    // Your existing methods remain unchanged below...
     @Transactional(readOnly = true)
     @Override
     public List<AddonResponseDTO> getAllAddons() {  // Get all addons from the system
@@ -85,13 +84,12 @@ public class AddonServiceImpl implements AddonService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public AddonResponseDTO createAddon(AddonRequestDTO addonRequestDTO) {  // Create a new addon
         if (addonRepository.existsByName(addonRequestDTO.getName().trim())) {
             throw new DuplicateResourceException("Addon with name '" + addonRequestDTO.getName() + "' already exists");
         }
-        Addon newAddon = AddonMapper.toEntity(addonRequestDTO);
+        Addon newAddon = addonMapper.toEntity(addonRequestDTO);
         Addon savedAddon = addonRepository.save(newAddon);
         return addonMapper.toResponseDTO(savedAddon);
     }
@@ -103,7 +101,7 @@ public class AddonServiceImpl implements AddonService {
         if (addonRepository.existsByNameAndIdNot(addonRequestDTO.getName().trim(), id)) {
             throw new DuplicateResourceException("Addon with name '" + addonRequestDTO.getName() + "' already exists");
         }
-        AddonMapper.updateEntityFromDTO(addonRequestDTO, existingAddon);
+        addonMapper.updateEntityFromDTO(addonRequestDTO, existingAddon);
         Addon updatedAddon = addonRepository.save(existingAddon);
         return addonMapper.toResponseDTO(updatedAddon);
     }

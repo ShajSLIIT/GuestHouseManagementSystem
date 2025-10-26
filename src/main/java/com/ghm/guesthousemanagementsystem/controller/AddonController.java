@@ -1,9 +1,9 @@
 package com.ghm.guesthousemanagementsystem.controller;
 
 
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
-import com.naveen.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
-import com.naveen.guesthousemanagementsystem.service.impl.AddonServiceImpl;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonResponseDTO;
+import com.ghm.guesthousemanagementsystem.service.impl.AddonServiceImpl;
+import com.ghm.guesthousemanagementsystem.dto.addon.AddonRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

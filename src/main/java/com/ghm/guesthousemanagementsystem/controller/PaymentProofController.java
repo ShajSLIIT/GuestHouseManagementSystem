@@ -1,5 +1,5 @@
 // PaymentProofController.java
-package com.naveen.guesthousemanagementsystem.controller;
+package com.ghm.guesthousemanagementsystem.controller;
 
 import com.ghm.guesthousemanagementsystem.dto.paymentproof.PaymentProofResponseDto;
 import com.ghm.guesthousemanagementsystem.service.PaymentProofService;

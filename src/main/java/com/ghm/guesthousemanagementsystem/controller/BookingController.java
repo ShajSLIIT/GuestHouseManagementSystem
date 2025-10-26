@@ -1,7 +1,8 @@
-package com.naveen.guesthousemanagementsystem.controller;
+package com.ghm.guesthousemanagementsystem.controller;
 
-import com.ghm.guesthousemanagementsystem.dto.bookingroom.DateRangeDto;
-import com.ghm.guesthousemanagementsystem.service.BookingRoomService;
+
+import com.ghm.guesthousemanagementsystem.dto.booking.BookingAdminResponseDto;
+import com.ghm.guesthousemanagementsystem.dto.booking.BookingCreateRequestDto;
 import com.ghm.guesthousemanagementsystem.service.BookingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
