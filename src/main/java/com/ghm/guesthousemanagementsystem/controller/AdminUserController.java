@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +38,14 @@ public class AdminUserController {
     public ResponseEntity<AdminUserResponseDto> updateAdminUser(@PathVariable UUID id, @RequestBody AdminUserReqDto adminUserReqDto) {
 
         return ResponseEntity.ok(adminUserService.updateAdminUser(id, adminUserReqDto));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<AdminUserResponseDto> patchAdminUser(
+            @PathVariable UUID id,
+            @RequestBody Map<String, Object> newDetails
+    ) {
+        return ResponseEntity.ok(adminUserService.patchAdminUser(id, newDetails));
     }
 
     @DeleteMapping("/{id}")

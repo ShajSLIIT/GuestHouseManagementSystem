@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -54,11 +55,40 @@ public class AdminUserServiceImpl implements AdminUserService {
                     throw new IllegalArgumentException("Email already in use: " + adminUserReqDto.getEmail());
                 });
 
-        existingAdminUser.setName(adminUserReqDto.getName());
         existingAdminUser.setEmail(adminUserReqDto.getEmail());
         existingAdminUser.setPasswordHash(passwordEncoder.encode(adminUserReqDto.getPassword()));
 
         return AdminUserMapper.toResponseDto(adminRepo.save(existingAdminUser));
+    }
+
+    @Override
+    public AdminUserResponseDto patchAdminUser(UUID id, Map<String, Object> newDetails) {
+        AdminUser existingUser = adminRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin user with id " + id + " not found"));
+
+        if (newDetails.containsKey("name")) {
+            String name = newDetails.get("name").toString();
+            existingUser.setName(name);
+        }
+
+        if (newDetails.containsKey("email")) {
+            String email = newDetails.get("email").toString();
+            adminRepo.findByEmail(email)
+                    .filter(admin -> !admin.getId().equals(id))
+                    .ifPresent(admin ->{
+                        throw new IllegalArgumentException("Email already in use: " + admin.getEmail());
+                    });
+            existingUser.setEmail(email);
+        }
+
+        if (newDetails.containsKey("password")) {
+            String password = newDetails.get("password").toString();
+            if (password != null && !password.isBlank()) {
+                existingUser.setPasswordHash(passwordEncoder.encode(password));
+            }
+        }
+
+        return AdminUserMapper.toResponseDto(adminRepo.save(existingUser));
     }
 
     @Override

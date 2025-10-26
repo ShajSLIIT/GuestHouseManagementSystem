@@ -4,6 +4,7 @@ import com.ghm.guesthousemanagementsystem.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,7 +43,14 @@ public class SecurityConfig {
 
         http.csrf(CsrfConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/api/admin-users").permitAll()
+                        .requestMatchers("/auth/login").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/api/admin-users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/admin-users/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/admin-users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/admin-users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admin-users/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
