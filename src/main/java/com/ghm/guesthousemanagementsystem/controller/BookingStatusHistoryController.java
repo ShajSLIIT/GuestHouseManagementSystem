@@ -18,12 +18,14 @@ public class BookingStatusHistoryController {
 
     private final BookingStatusHistoryService bookingStatusHistoryService;
 
+    //Get status history by booking
     @GetMapping("/{id}")
     public ResponseEntity<List<BookingStatusHistoryResponseDto>> getStatusHistoryByBookingId(@PathVariable UUID id){
         List<BookingStatusHistoryResponseDto> history = bookingStatusHistoryService.getStatusHistoryByBookingId(id);
         return ResponseEntity.ok(history);
     }
 
+    //Get all status history or filter by specific status
     @GetMapping("/filter-by-status")
     public ResponseEntity<List<BookingStatusHistoryResponseDto>> getStatusHistory(
             @RequestParam(required = false) BookingStatus status){
@@ -36,6 +38,7 @@ public class BookingStatusHistoryController {
         }
     }
 
+    //Get all bookings with the current status
     @GetMapping("/current-status")
     public ResponseEntity<List<BookingStatusWithTimestampResponseDto>> getBookingByCurrentStatus(
             @RequestParam BookingStatus status){

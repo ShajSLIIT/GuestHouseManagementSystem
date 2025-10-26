@@ -12,13 +12,15 @@ import java.util.UUID;
 @Repository
 public interface BookingRoomRepository extends JpaRepository<BookingRoom, UUID> {
 
+    //Get all booked rooms
     List<BookingRoom> findAllByBooking(Booking booking);
 
+    //Get all booked rooms for a booking
     List<BookingRoom> findAllByBooking_BookingId(UUID bookingId);
 
-    List<BookingRoom> findAllByRoom(Room room);
-
+    //Delete booking room records
     void deleteAllByBooking(Booking booking);
 
+    //Get all booked rooms for given bookings
     List<BookingRoom> findAllByBooking_BookingIdIn(List<UUID> bookingIds);
 }

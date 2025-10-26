@@ -15,12 +15,15 @@ import java.util.UUID;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, UUID> {
 
+    //Find booking using booking id
     Optional<Booking> findByBookingId(UUID bookingId);
 
+    //FInd booking using reference id
     Optional<Booking> findByReferenceId(String referenceId);
 
 //    Optional<Booking> findByToken(String token);
 
+    //Validating already booked rooms
     @Query("""
         SELECT DISTINCT b
         FROM Booking b
@@ -39,6 +42,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("excludeBookingId") UUID excludeBookingId
     );
 
+    //Find booked date ranges
     @Query("""
         SELECT br.room.id, b.checkInDate, b.checkOutDate
         FROM BookingRoom br

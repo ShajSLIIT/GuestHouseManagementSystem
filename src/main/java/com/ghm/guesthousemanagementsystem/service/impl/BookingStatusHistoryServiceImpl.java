@@ -32,7 +32,10 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
                              BookingStatus toStatus,
                              @Nullable String reason) {
 
+        //Create a new field in booking status history
         BookingStatusHistory history = new BookingStatusHistory();
+
+        //Fill fields with data
         history.setBooking(booking);
         history.setFromStatus(fromStatus);
         history.setToStatus(toStatus);
@@ -41,14 +44,18 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
         if(reason != null &&  !reason.isBlank()) {
             history.setReason(reason);
         }
+
+        //Save the field in the base
         bookingStatusHistoryRepository.save(history);
     }
 
     @Override
     public List<BookingStatusHistoryResponseDto> getStatusHistoryByBookingId(UUID bookingId){
 
+        //Fetch all booking status history for a booking
         List<BookingStatusHistory> entries = bookingStatusHistoryRepository.findAllByBooking_BookingIdOrderByChangedAtAsc(bookingId);
 
+        //Map status history
         return entries.stream()
                 .map(entry ->
                         BookingStatusHistoryMapper.mapStatusHistoryToStatusHistoryResponseDto(entry))
@@ -58,8 +65,10 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
     @Override
     public List<BookingStatusHistoryResponseDto> getAllStatusHistory(){
 
+        //Fetch all status history for all active bookings
         List<BookingStatusHistory> entries = bookingStatusHistoryRepository.findAllByOrderByChangedAtAsc();
 
+        //Map status history
         return entries.stream()
                 .map(entry->
                         BookingStatusHistoryMapper.mapStatusHistoryToStatusHistoryResponseDto(entry))
@@ -68,8 +77,11 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
 
     @Override
     public List<BookingStatusHistoryResponseDto> filterStatusHistory(BookingStatus status){
+
+        //Fetch all status history by a given status
         List<BookingStatusHistory> entries = bookingStatusHistoryRepository.findAllByToStatusOrderByChangedAtAsc(status);
 
+        //Map status history
         return entries.stream()
                 .map(entry ->
                         BookingStatusHistoryMapper.mapStatusHistoryToStatusHistoryResponseDto(entry))
@@ -79,10 +91,13 @@ public class BookingStatusHistoryServiceImpl implements BookingStatusHistoryServ
     @Override
     public List<BookingStatusWithTimestampResponseDto> getBookingByCurrentStatus(BookingStatus targetStatus) {
 
+        //Fetch all status history by booking's current status
         List<BookingStatusHistory> allEntries = bookingStatusHistoryRepository.findAllByOrderByChangedAtDesc();
 
+        //Create a new hash map
         Map<UUID, BookingStatusHistory> latestByBooking = new LinkedHashMap<>();
 
+        //Add each booking to hash map exactly one time
         for(BookingStatusHistory entry : allEntries) {
             UUID bookingId = entry.getBooking().getBookingId();
 

@@ -30,6 +30,8 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
 
     @Override
     public void createTemporaryToken(Booking booking, String token, LocalDate expiresAt) {
+
+        //Create a new field in temporary token table
         TemporaryToken temporaryToken = new TemporaryToken();
 
         temporaryToken.setBooking(booking);
@@ -44,13 +46,16 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Transactional
     public TemporaryToken getTokenIfValid(String token) {
 
+        //Fetch temporary token using token
         TemporaryToken temporaryToken = temporaryTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Token not found"));
 
+        //Validate if the token is active
         if(!temporaryToken.isActive()){
             throw new TokenInactiveException("Token is inactive");
         }
 
+        //Deactivate expired tokens
         deactivateIfExpired(temporaryToken);
 
         return temporaryToken;
@@ -60,9 +65,11 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Transactional
     public boolean isTokenValid(String token) {
 
+        //Fetch temporary token by token
         TemporaryToken temporaryToken = temporaryTokenRepository.findByToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Token not found"));
 
+        //Check if token is valid
         if(temporaryToken.isActive() && temporaryToken.getExpiresAt().isBefore(LocalDate.now())){
             temporaryToken.setActive(false);
             temporaryTokenRepository.save(temporaryToken);
@@ -74,6 +81,7 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Override
     public TemporaryToken getTokenByBookingId(UUID bookingId) {
 
+        //Fetch temporary token using booking id
         return temporaryTokenRepository.findByBooking_BookingId(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Token not found for this booking"));
     }
@@ -81,8 +89,10 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Override
     public Map<UUID, List<TemporaryTokenResponseDto>> getAllTokens() {
 
+        //Fetch all tokens
         List<TemporaryToken> temporaryTokens = temporaryTokenRepository.findAll();
 
+        //Map each token to booking
         Map<UUID, List<TemporaryTokenResponseDto>> tokensByBookingId = temporaryTokens.stream()
                 .collect(Collectors.groupingBy(
                         token -> token.getBooking().getBookingId(),
@@ -99,6 +109,7 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Transactional
     public void deactivateIfExpired(TemporaryToken temporaryToken){
 
+        //Validate token expiry
         if(temporaryToken.getExpiresAt().isBefore(LocalDate.now())){
             temporaryToken.setActive(false);
             temporaryTokenRepository.save(temporaryToken);
@@ -109,6 +120,7 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Transactional
     public void deactivateTokenByBookingId(UUID bookingId) {
 
+        //Fetch booking and deactivate its token
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking id not found"));
 
@@ -131,23 +143,28 @@ public class TemporaryTokenServiceImpl implements TemporaryTokenService {
     @Override
     @Transactional
     public void regenerateToken(Booking booking, LocalDate newExpiresAt) {
+
+        //Fetch token using booking
         TemporaryToken oldToken = temporaryTokenRepository.findByBooking(booking);
 
         if(oldToken == null){
             throw new ResourceNotFoundException("Token not found");
         }
 
+        //Deactivate current token
         if(oldToken.isActive()) {
             oldToken.setActive(false);
             temporaryTokenRepository.save(oldToken);
         }
 
+        //Regenerate a token and save it in a new token field
         TemporaryToken newToken = new TemporaryToken();
         newToken.setBooking(booking);
         newToken.setToken(TokenGenerator.generateToken());
         newToken.setExpiresAt(newExpiresAt);
         newToken.setActive(true);
 
+        //Replace old token with new token
         booking.setToken(newToken.getToken());
         bookingRepository.save(booking);
         temporaryTokenRepository.save(newToken);

@@ -22,6 +22,7 @@ public class BookingController {
     private final BookingService bookingService;
     private final BookingRoomService bookingRoomService;
 
+    //For display booking dates in availability calendar
     @GetMapping("/availability")
     public ResponseEntity<Map<UUID, List<DateRangeDto>>> getBookedDateRangesByProperty(@RequestParam UUID propertyId) {
         Map<UUID, List<DateRangeDto>> bookedDates = bookingRoomService.getBookedDateRangesByProperty(propertyId);
@@ -90,6 +91,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
+    //Guest patching his booking
     @PatchMapping("/guest/{referenceId}/patch")
     public ResponseEntity<BookingGuestResponseDto> patchBooking(
             @PathVariable String referenceId,
@@ -99,6 +101,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
+    //Guest amends booking by changing checkIn and checkOut dates
     @PostMapping("/guest/{referenceId}/amend")
     public ResponseEntity<BookingGuestResponseDto> amendBooking(
             @PathVariable String referenceId,
@@ -117,6 +120,7 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
+    //Guest view booking
     @GetMapping("/guest/{referenceId}")
     public ResponseEntity<BookingGuestResponseDto> getBookingByReferenceId(@PathVariable String referenceId)
     {

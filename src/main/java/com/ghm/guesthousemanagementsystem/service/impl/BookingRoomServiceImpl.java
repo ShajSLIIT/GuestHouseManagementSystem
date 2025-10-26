@@ -29,13 +29,15 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     @Override
     public void validateRoomAvailability(List<UUID> roomIds, LocalDate checkInDate, LocalDate checkOutDate, @Nullable UUID excludeBookingId){
 
+        //Fetch overlapping bookings for given dates
         List<Booking> overlappingBookings = bookingRepository.findOverlappingBookingsForRoomIds(
                 roomIds,
                 List.of(BookingStatus.pending, BookingStatus.confirmed),
                 checkInDate,
                 checkOutDate,
-                excludeBookingId);  //Should check for validation of days in between check_in & check_out
+                excludeBookingId);
 
+        //Validating no overlapping books are selected
         if(!overlappingBookings.isEmpty()) {
             throw new RoomUnavailableException("Some rooms are not available for the selected dates.");
         }
@@ -43,13 +45,17 @@ public class BookingRoomServiceImpl implements BookingRoomService {
 
     @Override
     public Map<UUID, List<DateRangeDto>> getBookedDateRangesByProperty(UUID propertyId) {
+
+        //Fetch date ranges by using property id
         List<Object[]> results = bookingRepository.findBookedDateRangesByProperty(
                 propertyId,
                 List.of(BookingStatus.pending, BookingStatus.confirmed)
         );
 
+        //Create a new hash map to store these details
         Map<UUID, List<DateRangeDto>> map = new HashMap<>();
 
+        //Map date ranges and room together
         for (Object[] row : results) {
             UUID roomId = (UUID) row[0];
             LocalDate checkIn = (LocalDate) row[1];
@@ -66,6 +72,7 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     @Transactional
     public void createBookingRooms(Booking booking, List<Room> rooms, LocalDate checkInDate, LocalDate checkOutDate){
 
+        //Create a new field in booking room
         List<BookingRoom> bookingRooms = rooms.stream()
                 .map(room -> new BookingRoom(booking, room, checkInDate, checkOutDate))
                 .toList();
@@ -77,8 +84,10 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     @Transactional
     public void updateBookingRooms(Booking booking, List<Room> rooms, LocalDate checkInDate, LocalDate checkOutDate) {
 
+        //Delete old fields in booking room
         bookingRoomRepository.deleteAllByBooking(booking);
 
+        //Create a new field in booking room
         List<BookingRoom> bookingRooms = rooms.stream()
                 .map(room -> new BookingRoom(booking, room, checkInDate, checkOutDate))
                 .toList();
@@ -98,6 +107,7 @@ public class BookingRoomServiceImpl implements BookingRoomService {
     @Override
     public Map<UUID, List<Room>> mapRoomsByBookingIds(List<UUID> bookingIds){
 
+        //Map booked rooms for given bookings
         List<BookingRoom> bookingRooms = bookingRoomRepository.findAllByBooking_BookingIdIn(bookingIds);
 
         return bookingRooms.stream()
