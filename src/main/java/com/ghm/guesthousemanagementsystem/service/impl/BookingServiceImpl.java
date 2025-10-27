@@ -1,8 +1,8 @@
 package com.ghm.guesthousemanagementsystem.service.impl;
 
-import com.ghm.guesthousemanagementsystem.dto.supportingdto.PropertySummaryDto;
+import com.ghm.guesthousemanagementsystem.dto.PropertySummaryDto;
 import com.ghm.guesthousemanagementsystem.dto.booking.*;
-import com.ghm.guesthousemanagementsystem.dto.supportingdto.RoomLineItemDto;
+import com.ghm.guesthousemanagementsystem.dto.RoomLineItemDto;
 import com.ghm.guesthousemanagementsystem.entity.*;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import com.ghm.guesthousemanagementsystem.exception.ResourceNotFoundException;

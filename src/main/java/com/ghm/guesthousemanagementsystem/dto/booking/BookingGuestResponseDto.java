@@ -1,7 +1,7 @@
 package com.ghm.guesthousemanagementsystem.dto.booking;
 
-import com.ghm.guesthousemanagementsystem.dto.supportingdto.PropertySummaryDto;
-import com.ghm.guesthousemanagementsystem.dto.supportingdto.RoomLineItemDto;
+import com.ghm.guesthousemanagementsystem.dto.PropertySummaryDto;
+import com.ghm.guesthousemanagementsystem.dto.RoomLineItemDto;
 import com.ghm.guesthousemanagementsystem.enums.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Setter
 @Getter
